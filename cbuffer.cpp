@@ -32,8 +32,8 @@ template <typename T>
 bool c_buffer<T>::empty() const noexcept { return _head == _tail; }
 template <typename T>
 bool c_buffer<T>::full() const noexcept { return ((_tail + 1) % _capacity) == _head; }
-template <typename T>
-bool c_buffer<T>::insert(const _ElemType& _elem) noexcept { return __proxy_insert<decltype(_elem), false>(_elem); }
+template <typename T> template <typename Y>
+bool c_buffer<T>::insert(Y&& _elem) noexcept { return __proxy_insert<decltype(_elem), false>(_elem); }
 template <typename T>
 void c_buffer<T>::pop() noexcept { __pop(); }
 template <typename T>
@@ -42,16 +42,16 @@ template <typename T>
 const typename c_buffer<T>::_ElemType c_buffer<T>::atomic_pop() { return __atomic_pop(); }
 
 // 
-// private function implication
+// private function implementation
 //
 
-template <typename T>
-bool c_buffer<T>::__insert(const _ElemType& _elem) noexcept {
+template <typename T> template <typename Y>
+bool c_buffer<T>::__insert(Y&& _elem) noexcept {
     if (full()) return false;
 
     _ElemType* _ptr = &_mem[_tail];
     try {
-        new(_ptr) _ElemType(_elem);
+        new(_ptr) _ElemType(std::forward<decltype(_elem)>(_elem));
     } catch (std::exception e) {
         printf("ERROR: insert failed (%s)\n", e.what());
         return false;

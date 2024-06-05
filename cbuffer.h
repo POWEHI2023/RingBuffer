@@ -8,7 +8,7 @@
 #include <string.h>
 
 /**
- * cpu time
+ *  cpu time
 */
 uint64_t rdtsc() {
     unsigned int lo, hi;
@@ -41,7 +41,8 @@ public:
     bool empty() const noexcept;
     bool full() const noexcept;
 
-    bool insert(const _ElemType& _elem) noexcept;
+    template <typename Y>
+    bool insert(Y&& _elem) noexcept;
     void pop() noexcept;
 
     /**
@@ -59,7 +60,8 @@ public:
     const _ElemType atomic_pop();
 
 private:
-    inline bool __insert(const _ElemType& _elem) noexcept;    
+    template <typename Y>
+    inline bool __insert(Y&& _elem) noexcept;
     inline void __pop() noexcept;
 
     inline bool __atomic_insert(const _ElemType& _elem) noexcept;
@@ -71,9 +73,9 @@ private:
     inline bool __proxy_insert(Y&& _elem) noexcept {
         bool _ret = false;
         if constexpr (_is_atomic)
-            _ret = __atomic_insert(std::forward<Y>(_elem));
+            _ret = __atomic_insert(std::forward<decltype(_elem)>(_elem));
         else 
-            _ret = __insert(std::forward<Y>(_elem));
+            _ret = __insert(std::forward<decltype(_elem)>(_elem));
         
         if (_ret) _size++;
         return _ret;
