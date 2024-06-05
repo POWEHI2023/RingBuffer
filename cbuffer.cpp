@@ -69,10 +69,17 @@ void c_buffer<T>::__pop() noexcept {
     _size--;
 }
 
+template <typename T> template <typename Y>
+bool c_buffer<T>::__atomic_insert(Y&& _elem) noexcept {
+    std::lock_guard<std::mutex> _locker(mtx);
+    return this->__insert(std::forward<decltype(_elem)>(_elem));
+}
 template <typename T>
-bool c_buffer<T>::__atomic_insert(const _ElemType& _elem) noexcept { return false; }
-template <typename T>
-const typename c_buffer<T>::_ElemType c_buffer<T>::__atomic_pop() { return false; }
+const typename c_buffer<T>::_ElemType c_buffer<T>::__atomic_pop() {
+    std::lock_guard<std::mutex> _locker(mtx);
+    _ElemType _ret = front(); pop();
+    return _ret;
+}
 
 
 

@@ -5,6 +5,8 @@
 #include <type_traits>
 #include <exception>
 #include <string>
+#include <mutex>
+
 #include <string.h>
 
 /**
@@ -63,8 +65,8 @@ private:
     template <typename Y>
     inline bool __insert(Y&& _elem) noexcept;
     inline void __pop() noexcept;
-
-    inline bool __atomic_insert(const _ElemType& _elem) noexcept;
+    template <typename Y>
+    inline bool __atomic_insert(Y&& _elem) noexcept;
     inline const _ElemType __atomic_pop();
 
     // weak interface
@@ -85,6 +87,8 @@ private:
     size_t _size, _capacity;
     size_t _head, _tail;
     _ElemType *_mem;
+
+    std::mutex mtx;
 };
 
 class PopEmptyBufferError : public std::exception {
