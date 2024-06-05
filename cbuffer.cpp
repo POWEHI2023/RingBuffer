@@ -10,6 +10,8 @@ c_buffer<T>::~c_buffer() noexcept {
         if (_ptr != nullptr) 
             _ptr->~_ElemType();
     }
+
+    free(_mem);
 }
 
 template <typename T>
