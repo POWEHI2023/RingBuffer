@@ -1,5 +1,4 @@
-# CycleBuffer
+# RingBuffer
 
-练手项目
-
-限定初始大小的循环缓冲区，现代C++实现
+limite sized ring buffer
+MODERN_CPP_IMPL.VER.
